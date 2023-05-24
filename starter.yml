@@ -1,0 +1,32 @@
+---
+- name: Run server
+  hosts: labhost
+  remote_user: ubuntu
+  become: true
+  become_user: root
+  tasks:
+    - name: Remove old Hexo folder
+      ansible.builtin.file:
+        path: /home/ubuntu/blog
+        state: absent
+    - name: Init hexo
+      ansible.builtin.command:
+        cmd: hexo init blog
+    - name: Npm install
+      ansible.builtin.command:
+        chdir: blog
+        cmd: npm install
+    - name: Kill old server hexo
+      ansible.builtin.command:
+        chdir: blog
+        cmd: killall -9 hexo
+      ignore_errors: true
+    - name: Kill old server node
+      ansible.builtin.command:
+        chdir: blog
+        cmd: killall -9 node
+      ignore_errors: true
+    - name: Start server
+      ansible.builtin.command:
+        chdir: blog
+        cmd: hexo server --port 3306 &

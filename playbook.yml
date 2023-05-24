@@ -1,0 +1,35 @@
+---
+- name: Install node + npm
+  hosts: labhost
+  remote_user: ubuntu
+  become: true
+  become_user: root
+  tasks:
+    - name: Install the gpg key for nodejs LTS
+      apt_key:
+        url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+        state: present
+    - name: Install the nodejs LTS repos
+      apt_repository:
+        repo: "deb https://deb.nodesource.com/node_20.x {{ ansible_distribution_release }} main"
+        state: present
+        update_cache: yes
+    - name: Install node
+      apt:
+        update_cache: yes
+        name: nodejs
+        state: latest
+- name: Configure server
+  hosts: myhost
+  remote_user: ubuntu
+  become: true
+  become_user: root
+  tasks:
+    - name: Create Hexo folder
+      ansible.builtin.file:
+        path: /home/ubuntu/hexo/
+        state: directory
+    - name: Install hexo by npm
+      ansible.builtin.command:
+        chdir: /home/ubuntu/hexo/
+        cmd: npm install hexo-cli -g
