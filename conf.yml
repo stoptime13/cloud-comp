@@ -20,7 +20,7 @@
         name: nodejs
         state: latest
 - name: Configure server
-  hosts: myhost
+  hosts: labhost
   remote_user: ubuntu
   become: true
   become_user: root
